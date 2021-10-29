@@ -10,7 +10,7 @@ def mini():
     white=(255,255,255)
     line_color=(10,10,10)
 
-    TTT=[[None]*3,[None]*3,[None]*3]*3
+    TTT=[[None]*3,[None]*3,[None]*3]
 
     pg.init()
     fps=30
@@ -148,22 +148,116 @@ def mini():
         pg.display.update()
         CLOCK.tick(fps)
 
-
-
-width=800
-height=800
 pg.init()
-fps=30
-CLOCK=pg.time.Clock()
-screen=pg.display.set_mode((width,height+100),0,3)
-pg.display.set_caption("ultimate tic tac toe")
-opening=pg.image.load("tic tac opening.png")
-x_img=pg.image.load('X.png')
-o_img=pg.image.load('O.png')
 
-x_img=pg.transform.scale(x_img,(80,80))
-o_img=pg.transform.scale(o_img,(80,80))
-opening=pg.transform.scale(opening,(width,height+100))
+xo='x'
+winner=None
+draw=False
+t=[[None]*3,[None]*3,[None]*3,[None]*3,[None]*3,[None]*3,[None]*3,[None]*3,[None]*3]
+CLOCK=pg.time.Clock()
+white=(255,255,255)
+black=(0,0,0)
+
+sn_height=600
+sn_width=600
+sn=pg.display.set_mode((sn_width,sn_height))
+pg.display.set_caption("ultimate tic tac toe!")
+
+def game_opening():
+    pg.display.update()
+    time.sleep(1)
+    sn.fill(white)
+
+    pg.draw.line(sn,black,(sn_width/3,0),(sn_width/3,sn_height),7)
+    pg.draw.line(sn,black,(sn_width/9,20),(sn_width/9,sn_height-20),2)
+    pg.draw.line(sn,black,(sn_width/3*2,0),(sn_width/3*2,sn_height),7)
+    pg.draw.line(sn,black,(sn_width/9*4,20),(sn_width/9*4,sn_height-20),2)
+    pg.draw.line(sn,black,(sn_width/9*7,20),(sn_width/9*7,sn_height-20),2)
+    pg.draw.line(sn,black,(sn_width/9*2,20),(sn_width/9*2,sn_height-20),2)
+    pg.draw.line(sn,black,(sn_width/9*5,20),(sn_width/9*5,sn_height-20),2)
+    pg.draw.line(sn,black,(sn_width/9*8,20),(sn_width/9*8,sn_height-20),2)
+
+    pg.draw.line(sn,black,(0,sn_height/3),(sn_width,sn_height/3),7)
+    pg.draw.line(sn,black,(20,sn_height/9),(sn_width-20,sn_height/9),2)
+    pg.draw.line(sn,black,(0,sn_height/3*2),(sn_width,sn_height/3*2),7)
+    pg.draw.line(sn,black,(20,sn_height/9*2),(sn_width-20,sn_height/9*2),2)
+    pg.draw.line(sn,black,(20,sn_height/9*4),(sn_width-20,sn_height/9*4),2)
+    pg.draw.line(sn,black,(20,sn_height/9*5),(sn_width-20,sn_height/9*5),2)
+    pg.draw.line(sn,black,(20,sn_height/9*7),(sn_width-20,sn_height/9*7),2)
+    pg.draw.line(sn,black,(20,sn_height/9*8),(sn_width-20,sn_height/9*8),2)
+
+def check_win():
+    global t,winner,draw
+
+    
+
+
+
+def click():
+    x,y=pg.mouse.get_pos()
+
+    if (x<sn_width/9):
+        col=1
+    elif(x<sn_width/9*2):
+        col=2
+    elif(x<sn_width/9*3):
+        col=3
+    elif(x<sn_width/9*4):
+        col=4
+    elif(x<sn_width/9*5):
+        col=5
+    elif(x<sn_width/9*6):
+        col=6
+    elif(x<sn_width/9*7):
+        col=7
+    elif(x<sn_width/9*8):
+        col=8
+    elif(x<sn_width):
+        col=9
+    else:
+        row=None
+    
+    if(y<sn_height/9):
+        row=1
+    elif(y<sn_height/9*2):
+        row=2
+    elif(y<sn_height/9*3):
+        row=3
+    elif(y<sn_height/9*4):
+        row=4
+    elif(y<sn_height/9*5):
+        row=5
+    elif(y<sn_height/9*6):
+        row=6
+    elif(y<sn_height/9*7):
+        row=7
+    elif(y<sn_height/9*8):
+        row=8
+    elif(y<sn_height):
+        row=9
+    else:
+        row=None
+    
+    if(row and col and t[row-1][col-1] is None):
+        global xo 
+        drawxo(row,col)
+        check_win()
+
+
+game_opening()
+
+state=True
+while state:
+    for event in pg.event.get():
+        if event.type==pg.QUIT:
+            state=False
+
+    pg.display.update()
+    CLOCK.tick(30)
+
+
+pg.quit()
+quit()
 
 
 
