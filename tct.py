@@ -148,12 +148,22 @@ def mini():
         pg.display.update()
         CLOCK.tick(fps)
 
-pg.init()
 
 xo='x'
-winner=None
-draw=False
-t=[[None]*3,[None]*3,[None]*3,[None]*3,[None]*3,[None]*3,[None]*3,[None]*3,[None]*3]
+mini_winner=None
+mini_draw=False
+g=[[None]*9 for i in range(9)]
+g1=g[0][0:3],g[1][0:3],g[2][0:3]
+g2=[g[0][3:6],g[1][3:6],g[2][3:6]]
+g3=[g[0][6:9],g[1][6:9],g[2][6:9]]
+g4=[g[3][0:3],g[4][0:3],g[5][0:3]]
+g5=[g[3][3:6],g[4][3:6],g[5][3:6]]
+g6=[g[3][6:9],g[4][6:9],g[5][6:9]]
+g7=[g[6][0:3],g[7][0:3],g[8][0:3]]
+g8=[g[6][3:6],g[7][3:6],g[8][3:6]]
+g9=[g[6][6:9],g[7][6:9],g[8][6:9]]
+
+pg.init()
 CLOCK=pg.time.Clock()
 white=(255,255,255)
 black=(0,0,0)
@@ -162,6 +172,11 @@ sn_height=600
 sn_width=600
 sn=pg.display.set_mode((sn_width,sn_height))
 pg.display.set_caption("ultimate tic tac toe!")
+
+ximg=pg.image.load('X.png')
+oimg=pg.image.load('O.png')
+ximg=pg.transform.scale(ximg,(60,60))
+oimg=pg.transform.scale(oimg,(60,60))
 
 def game_opening():
     pg.display.update()
@@ -186,10 +201,102 @@ def game_opening():
     pg.draw.line(sn,black,(20,sn_height/9*7),(sn_width-20,sn_height/9*7),2)
     pg.draw.line(sn,black,(20,sn_height/9*8),(sn_width-20,sn_height/9*8),2)
 
-def check_win():
-    global t,winner,draw
+def status():
+    global mini_draw
 
+    if mini_winner is None:
+        message=xo.upper()+" turn"
+    else:
+        message=mini_winner.upper()+"won"
+    if mini_draw:
+        message=" mini draw"
+
+    font=pg.font.Font(None,30)
+    text=font.render(message,1,(255,255,255))
+    sn.fill((0,0,0),(0,400,500,100))
+    text_rect=text.get_rect(center=(sn_width/2,500-50))
+    sn.blit(text,text_rect)
+    pg.display.update()
+
+
+
+
+
+def mini_win(grid):
+    global g,mini_winner,mini_draw
+
+
+
+    for row in range(0,3):
+        if((grid[row][0]==grid[row][1]==grid[row][2])and(grid[row][0] is not None)):
+                mini_winner=grid[row][0]
+                sn.fill(black)
+                break
+    for col in range(0,3):
+        if((grid[0][col]==grid[1][col]==grid[2][col])and (grid[0][col] is not None)):
+            mini_winner=grid[0][col]
+            
+            break
+    if(grid[0][0]==grid[1][1]==grid[2][2]) and (grid[0][0] is not None):
+        mini_winner=grid[0][0]
+        
+    if(grid[0][2]==grid[1][1]==grid[2][0]) and (grid[0][2] is not None):
+        mini_winner=grid[0][2]
+        
+    if(all([all(row) for row in grid])and mini_winner is None):
+        mini_draw=True
+    status()
+
+
+def drawxo(row,col):
+    global g,xo
+
+    if row==1:
+        x=10
+    if row==2:
+        x=sn_width/9
+    if row==3:
+        x=sn_width/9*2
+    if row==4:
+        x=sn_width/9*3
+    if row==5:
+        x=sn_width/9*4
+    if row==6:
+        x=sn_width/9*5
+    if row==7:
+        x=sn_width/9*6
+    if row==8:
+        x=sn_width/9*7
+    if row==9:
+        x=sn_width/9*8
+    if col==1:
+        y=5
+    if col==2:
+        y=sn_height/9
+    if col==3:
+        y=sn_height/9*2 
+    if col==4:
+        y=sn_height/9*3
+    if col==5:
+        y=sn_height/9*4 
+    if col==6:
+        y=sn_height/9*5
+    if col==7:
+        y=sn_height/9*6 
+    if col==8:
+        y=sn_height/9*7 
+    if col==9:
+        y=sn_height/9*8
     
+    g[row-1][col-1]=xo
+    if (xo=='x'):
+        sn.blit(ximg,(y,x))
+        xo='o'
+    else:
+        sn.blit(oimg,(y,x))
+        xo='x'
+    pg.display.update()
+
 
 
 
@@ -215,7 +322,7 @@ def click():
     elif(x<sn_width):
         col=9
     else:
-        row=None
+        col=None
     
     if(y<sn_height/9):
         row=1
@@ -238,10 +345,47 @@ def click():
     else:
         row=None
     
-    if(row and col and t[row-1][col-1] is None):
+    if(row and col and g[row-1][col-1] is None):
         global xo 
         drawxo(row,col)
-        check_win()
+        check_grid(row-1,col-1)
+
+
+def check_grid(r,c):
+    global g,g1
+    gr=[]
+    if g[r][c] in g1:
+        gr=g1
+    if g[r][c] in g2:
+        gr=g2s
+    if g[r][c] in g3:
+        gr=g3
+    if g[r][c] in g4:
+        gr=g4
+    if g[r][c] in g5:
+        gr=g5
+    if g[r][c] in g6:
+        gr=g6
+    if g[r][c] in g7:
+        gr=g7
+    if g[r][c] in g8:
+        gr=g8
+    if g[r][c] in g9:
+        gr=g9
+    
+    mini_win(g1)
+
+def reset_game():
+    global g,mini_winner,xo,mini_draw
+    time.sleep(2)
+    x='x'
+    mini_draw=False
+    game_opening()
+    mini_winner=None
+    g=[[None]*9 for i in range(9)]
+
+
+
 
 
 game_opening()
@@ -251,6 +395,11 @@ while state:
     for event in pg.event.get():
         if event.type==pg.QUIT:
             state=False
+        elif event.type==MOUSEBUTTONDOWN:
+            click()
+            if(mini_winner or mini_draw):
+                reset_game()
+
 
     pg.display.update()
     CLOCK.tick(30)
