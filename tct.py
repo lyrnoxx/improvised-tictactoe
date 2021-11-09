@@ -173,8 +173,8 @@ sn_width=600
 sn=pg.display.set_mode((sn_width,sn_height))
 pg.display.set_caption("ultimate tic tac toe!")
 
-ximg=pg.image.load('X.png')
-oimg=pg.image.load('O.png')
+ximg=pg.image.load('images/X.png')
+oimg=pg.image.load('images/O.png')
 ximg=pg.transform.scale(ximg,(60,60))
 oimg=pg.transform.scale(oimg,(60,60))
 
