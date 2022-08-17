@@ -1,3 +1,4 @@
+from unicodedata import name
 import pygame as pg,sys
 from pygame.locals import *
 import time
@@ -191,15 +192,17 @@ def game_opening():
     pg.draw.line(sn,black,(20,sn_height/9*7),(sn_width-20,sn_height/9*7),2)
     pg.draw.line(sn,black,(20,sn_height/9*8),(sn_width-20,sn_height/9*8),2)
 
-def status():
+def status(x):
     global mini_draw
 
     if mini_winner is None:
-        message=xo.upper()+" turn"
+        message=xo.upper()+"'s turn"
     else:
         message=mini_winner.upper()+"won"
     if mini_draw:
         message=" mini draw"
+    if(x==1):
+        message=message+",   next grid= "+ng
 
     font=pg.font.Font(None,30)
     text=font.render(message,1,(255,0,0))
@@ -221,18 +224,60 @@ def mini_win(grid,x,y):
     g8=[grid[6][3:6],grid[7][3:6],grid[8][3:6]]
     g9=[grid[6][6:9],grid[7][6:9],grid[8][6:9]]
 
-    if(x==y):
-        print("onichan")
-    grd=g1
+    print(x,y)
+    def find_grid(x,y):
+        global grd,ng
+        if(x<4) and(y<4):
+            grd=g1
+            ng="one"
+        elif((x<4 and y<7)and(y>3)):
+            grd=g2 
+            ng="two"
+        elif((x<4)and (y>6)):
+            grd=g3
+            ng="three"
+        elif((x<7 and y<4)and(x>3 and y>0)):
+            grd=g4
+            ng="four"
+        elif((x<7 and y<7)and(x>3 and y>3)):
+            grd=g5
+            ng="five"
+        elif((x<7)and (x>3 and y>6)):
+            grd=g6
+            ng="six"
+        elif((x>6 and y<4)):
+            grd=g7
+            ng="seven"
+        elif((x<10 and y<7)and(x>6 and y>3)):
+            grd=g8 
+            ng="eight"
+        else:
+            grd=g9
+            ng="nine"
     
+    find_grid(x,y)
+
+    if(x in [1,4,7]):
+        nx=1
+    elif(x in [2,5,8]):
+       nx=4 
+    elif(x in [3,6,9]):
+       nx=7 
+    if(y in [1,4,7]):
+        ny=1
+    elif(y in [2,5,8]):
+       ny=4 
+    elif(y in [3,6,9]):
+       ny=7 
+    
+
     for row in range(0,3):
         if((grd[row][0]==grd[row][1]==grd[row][2])and(grd[row][0] is not None)):
-                mini_winner=grid[row][0]               
-                draw_large(30,30)
+                mini_winner=grd[row][0]               
                 break
     for col in range(0,3):
         if((grd[0][col]==grd[1][col]==grd[2][col])and (grd[0][col] is not None)):
-            mini_winner=grid[0][col]
+            mini_winner=grd[0][col]
             break
     if(grd[0][0]==grd[1][1]==grd[2][2]) and (grd[0][0] is not None):
         mini_winner=grd[0][0]
@@ -240,9 +285,12 @@ def mini_win(grid,x,y):
     if(grd[0][2]==grd[1][1]==grd[2][0]) and (grd[0][2] is not None):
         mini_winner=grd[0][2]
         
-    if(all([all(row) for row in grid])and mini_winner is None):
+    if(all([all(row) for row in grd])and mini_winner is None):
         mini_draw=True
-    status()
+
+    status(0)
+    find_grid(nx,ny)
+    status(1)
 
 def draw_large(x,y):
     ximage=pg.transform.scale(ximg,(180,180))
@@ -346,14 +394,11 @@ def click():
     if(row and col and g[row-1][col-1] is None):
         global xo 
         drawxo(row,col)
-        mini_win(g,row-1,col-1)
-        if (row==5 and col==5):
-            print("hello")
-            print(g)
+        mini_win(g,row,col)
 
 def reset_game():
     global g,mini_winner,xo,mini_draw
-    time.sleep(2)
+    time.sleep(0)
     x='x'
     mini_draw=False
     game_opening()
@@ -370,8 +415,8 @@ while state:
             state=False
         elif event.type==MOUSEBUTTONDOWN:
             click()
-            #if(mini_winner or mini_draw):
-               # reset_game()
+            if(mini_winner or mini_draw):
+               reset_game()
 
 
     pg.display.update()
